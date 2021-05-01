@@ -11,11 +11,17 @@ express()
   .set('views', path.join(__dirname, 'views'))
   .set('view engine', 'ejs')
   .get('/', async (req, res) => {
-    const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    const browser = await puppeteer.launch({ args: ['--disable-gpu',
+        '--disable-dev-shm-usage',
+        '--disable-setuid-sandbox',
+        '--no-first-run',
+        '--no-sandbox',
+        '--no-zygote',
+        '--single-process'],executablePath: '/usr/bin/chromium-browser'});
     const page = await browser.newPage();
     await page.setViewport({ width: 600, height: 800 });
     await page.goto(process.env.SCREENSHOT_URL || 'https://darksky.net/details/40.7127,-74.0059/2021-1-6/us12/en');
-    // await page.waitForTimeout(3000);
+    await page.waitForTimeout(3000);
     await page.screenshot({
       path: '/tmp/screenshot.png',
     });
